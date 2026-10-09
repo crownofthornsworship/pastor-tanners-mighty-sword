@@ -950,16 +950,29 @@
           ctx.stroke();
         }
         if (heroSprite.complete && heroSprite.naturalWidth) {
-          // The art sheet's horizontal columns are ordered opposite the labels.
-          const dirs = { down: 0, left: 2, right: 1, up: 3 };
           const now = performance.now();
           const row =
             now < hero.swingUntil ? 2 : now < hero.movingUntil ? 1 : 0;
           const sw = heroSprite.naturalWidth / 4,
             sh = heroSprite.naturalHeight / 3;
+          // The running row contains two right-facing poses. Use one clean
+          // profile and mirror it so movement and idle always agree.
+          const horizontal = hero.dir === "left" || hero.dir === "right";
+          const sourceColumn = horizontal
+            ? row === 2
+              ? 2
+              : 1
+            : hero.dir === "up"
+              ? 3
+              : 0;
+          ctx.save();
+          if (hero.dir === "left") {
+            ctx.translate(hero.x * 2, 0);
+            ctx.scale(-1, 1);
+          }
           ctx.drawImage(
             heroSprite,
-            dirs[hero.dir] * sw,
+            sourceColumn * sw,
             row * sh,
             sw,
             sh,
@@ -968,6 +981,7 @@
             96,
             72,
           );
+          ctx.restore();
         } else {
           box(hero.x - 13, hero.y + 5, 11, 19, "#25293b");
           box(hero.x + 2, hero.y + 5, 11, 19, "#25293b");
