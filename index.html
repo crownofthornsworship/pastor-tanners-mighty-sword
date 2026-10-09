@@ -78,6 +78,8 @@
       }
       .wrap {
         position: relative;
+        overflow: hidden;
+        border-radius: 12px;
       }
       canvas {
         display: block;
@@ -125,13 +127,17 @@
       #dialog {
         display: none;
         position: absolute;
-        inset: 5% 5%;
+        left: 1.5%;
+        right: 1.5%;
+        bottom: 1.5%;
+        max-height: 46%;
         background: rgba(10, 16, 31, 0.97);
         border: 2px solid #dcb760;
         border-radius: 12px;
         overflow: auto;
         padding: clamp(12px, 3vw, 25px);
-        z-index: 3;
+        z-index: 8;
+        box-shadow: 0 -12px 35px #000a;
       }
       #dialog h2 {
         color: #ffdf8d;
@@ -139,6 +145,7 @@
       }
       #answers {
         display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 9px;
         margin: 16px 0;
       }
@@ -160,6 +167,21 @@
         justify-content: space-between;
         align-items: center;
         gap: 12px;
+        position: absolute;
+        inset: auto 10px 10px 10px;
+        z-index: 5;
+        padding: 8px;
+        margin: 0;
+        pointer-events: none;
+        background: linear-gradient(transparent, rgba(5, 10, 22, 0.88));
+        border: 0;
+      }
+      .controls button {
+        pointer-events: auto;
+        touch-action: none;
+      }
+      .control-copy {
+        max-width: 420px;
       }
       .dpad {
         display: grid;
@@ -182,6 +204,22 @@
       #message {
         color: #ffdc8d;
         min-height: 24px;
+      }
+      #cinematic {
+        display: none;
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 7;
+        padding: 10px 18px;
+        border: 1px solid #ffe39a;
+        border-radius: 999px;
+        color: #fff4c4;
+        background: rgba(7, 14, 32, 0.9);
+        font-weight: 900;
+        box-shadow: 0 0 35px #ffd86a88;
+        text-align: center;
       }
       footer {
         font-size: 12px;
@@ -209,14 +247,179 @@
       }
       @media (max-width: 480px) {
         #dialog {
-          inset: 2% 2%;
+          left: 1%;
+          right: 1%;
+          bottom: 1%;
+          max-height: 52%;
+          padding: 10px;
         }
         .controls {
           align-items: end;
-          flex-direction: column;
+        }
+        .control-copy .help,
+        .control-copy b {
+          display: none;
+        }
+        #message {
+          font-size: 11px;
+          min-height: 0;
+          margin: 0 0 4px;
+          max-width: 150px;
+        }
+        #interact {
+          padding: 11px 9px;
+          font-size: 12px;
+        }
+        #answers {
+          grid-template-columns: 1fr;
+          gap: 6px;
+          margin: 8px 0;
+        }
+        #answers button {
+          padding: 8px 9px;
+          font-size: 12px;
+        }
+        #dialog h2 {
+          font-size: 17px;
+        }
+        #dialog p {
+          margin: 6px 0;
+          font-size: 12px;
         }
         .title-card {
           margin: auto;
+        }
+      }
+      @media (orientation: landscape) and (max-height: 600px) {
+        body {
+          overflow: hidden;
+        }
+        header {
+          height: 46px;
+          padding: 4px 8px;
+        }
+        header small {
+          display: none;
+        }
+        .header-actions button {
+          padding: 6px 8px;
+          font-size: 11px;
+        }
+        main {
+          max-width: none;
+          height: calc(100dvh - 46px);
+          padding: 0;
+        }
+        .hud {
+          position: absolute;
+          top: 50px;
+          left: 8px;
+          z-index: 6;
+          margin: 0;
+          gap: 4px;
+          pointer-events: none;
+        }
+        .pill {
+          padding: 4px 8px;
+          font-size: 10px;
+          background: rgba(10, 20, 39, 0.88);
+        }
+        .wrap {
+          width: 100vw;
+          height: calc(100dvh - 46px);
+          border-radius: 0;
+        }
+        canvas {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border: 0;
+          border-radius: 0;
+        }
+        footer {
+          display: none;
+        }
+        .controls {
+          left: 6px;
+          right: auto;
+          bottom: 5px;
+          width: min(56%, 470px);
+          padding: 5px;
+        }
+        .control-copy b,
+        .control-copy .help {
+          display: none;
+        }
+        #message {
+          font-size: 10px;
+          min-height: 0;
+          max-width: 220px;
+          margin: 0 0 3px;
+        }
+        #interact {
+          padding: 9px 10px;
+          font-size: 11px;
+        }
+        .dpad {
+          grid-template-columns: repeat(3, 42px);
+          gap: 2px;
+        }
+        .dpad button {
+          width: 42px;
+          height: 38px;
+          font-size: 18px;
+        }
+        #dialog {
+          left: auto;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          width: 44%;
+          max-height: none;
+          border-radius: 12px 0 0 12px;
+          padding: 10px;
+        }
+        #answers {
+          grid-template-columns: 1fr;
+          gap: 4px;
+          margin: 6px 0;
+        }
+        #answers button {
+          padding: 7px;
+          font-size: 11px;
+        }
+        #dialog h2 {
+          font-size: 16px;
+        }
+        #dialog p {
+          margin: 4px 0;
+          font-size: 11px;
+        }
+        #feedback {
+          min-height: 16px;
+        }
+        #close {
+          padding: 7px 9px;
+          font-size: 11px;
+        }
+        #titleScreen {
+          padding: 8px;
+        }
+        .title-card {
+          width: 54%;
+          padding: 15px;
+          margin-right: auto;
+        }
+        .title-card h2 {
+          font-size: clamp(25px, 6vw, 45px);
+        }
+        .title-card p {
+          font-size: 11px;
+          margin: 7px 0;
+        }
+        .title-card button {
+          padding: 9px 14px;
+          font-size: 13px;
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -254,6 +457,7 @@
       <div class="hud">
         <span class="pill" id="progress">Shadows freed: 0 / 5</span
         ><span class="pill" id="score">Light: 0</span
+        ><span class="pill" id="scrolls">Scrolls: 0 / 3</span
         ><span class="pill" id="status">Mission: Find the shadows</span>
       </div>
       <div class="wrap">
@@ -264,10 +468,11 @@
           tabindex="0"
           aria-label="Top-down adventure game map"
         ></canvas>
+        <div id="cinematic" aria-live="polite"></div>
         <section
           id="dialog"
           role="dialog"
-          aria-modal="true"
+          aria-modal="false"
           aria-labelledby="questionTitle"
         >
           <h2 id="questionTitle"></h2>
@@ -277,32 +482,32 @@
           <p id="feedback" aria-live="polite"></p>
           <button id="close">Return to the city</button>
         </section>
-      </div>
-      <div class="panel controls">
-        <div>
-          <b>Move Pastor Tanner</b>
-          <p class="help">
-            Arrow keys / WASD or touch arrows. Walk near a resident and press
-            Space / Enter or tap CONFRONT. Choose the Scripture that speaks to
-            the struggle. No people are harmed.
-          </p>
-          <p id="message" aria-live="polite">
-            Welcome! The shadows have fallen over Albany. Bring the light.
-          </p>
-          <button id="interact">⚔️ CONFRONT SHADOW</button>
-        </div>
-        <div class="dpad">
-          <span class="empty"></span
-          ><button data-dir="up" aria-label="Move up">▲</button
-          ><span class="empty"></span
-          ><button data-dir="left" aria-label="Move left">◀</button
-          ><button data-dir="down" aria-label="Move down">▼</button
-          ><button data-dir="right" aria-label="Move right">▶</button>
+        <div class="panel controls">
+          <div class="control-copy">
+            <b>Move Pastor Tanner</b>
+            <p class="help">
+              Arrow keys / WASD or touch arrows. Walk near a resident and press
+              Space / Enter or tap CONFRONT. Choose the Scripture that speaks to
+              the struggle. No people are harmed.
+            </p>
+            <p id="message" aria-live="polite">
+              Welcome! The shadows have fallen over Albany. Bring the light.
+            </p>
+            <button id="interact">⚔️ CONFRONT SHADOW</button>
+          </div>
+          <div class="dpad">
+            <span class="empty"></span
+            ><button data-dir="up" aria-label="Move up">▲</button
+            ><span class="empty"></span
+            ><button data-dir="left" aria-label="Move left">◀</button
+            ><button data-dir="down" aria-label="Move down">▼</button
+            ><button data-dir="right" aria-label="Move right">▶</button>
+          </div>
         </div>
       </div>
       <footer>
         Fictional residents and situations · Scripture references used for
-        learning · Public preview v0.2
+        learning · Mobile overhaul v0.3
       </footer>
     </main>
     <script>
@@ -395,6 +600,43 @@
             "1 Corinthians 10:13 points to God’s faithfulness and the way to endure temptation.",
         },
       ];
+      const boss = { x: 470, y: 150, name: "The Great Darkness" };
+      const bossQuestions = [
+        {
+          prompt:
+            "When darkness accuses and condemns, which truth anchors the believer?",
+          answers: [
+            "Romans 8:1 — There is no condemnation for those in Christ Jesus.",
+            "Genesis 8:11 — The dove returned with a leaf.",
+            "Proverbs 30:25 — Ants prepare their food.",
+          ],
+          correct: 0,
+          explain:
+            "Our standing rests in Christ, not in the voice of accusation.",
+        },
+        {
+          prompt: "What overcomes spiritual darkness?",
+          answers: [
+            "Human strength alone",
+            "John 8:12 — Jesus is the light of the world.",
+            "Ignoring every struggle",
+          ],
+          correct: 1,
+          explain:
+            "Jesus—not the sword or the hero—is the true Light who saves.",
+        },
+        {
+          prompt: "How should God's Word be used in this final stand?",
+          answers: [
+            "As truth applied faithfully and in context.",
+            "As a magic spell.",
+            "To shame hurting people.",
+          ],
+          correct: 0,
+          explain:
+            "Scripture reveals truth and points us to Jesus; it is never a weapon against people.",
+        },
+      ];
       let saved = {};
       try {
         saved = JSON.parse(localStorage.getItem("tanner-sword-v1") || "{}");
@@ -402,7 +644,22 @@
         localStorage.removeItem("tanner-sword-v1");
       }
       let freed = new Set(Array.isArray(saved.freed) ? saved.freed : []),
-        score = Number(saved.score) || 0;
+        score = Number(saved.score) || 0,
+        foundScrolls = new Set(
+          Array.isArray(saved.foundScrolls) ? saved.foundScrolls : [],
+        );
+      let bossStage = Number(saved.bossStage) || 0,
+        bossDefeated = Boolean(saved.bossDefeated);
+      const scrolls = [
+        { x: 292, y: 207, ref: "Psalm 119:105" },
+        { x: 674, y: 350, ref: "Ephesians 6:17" },
+        { x: 875, y: 470, ref: "Hebrews 4:12" },
+      ];
+      const roamingShadows = [
+        { x: 565, y: 180, vx: 0.45, vy: 0.28 },
+        { x: 265, y: 390, vx: -0.35, vy: 0.42 },
+        { x: 835, y: 270, vx: 0.38, vy: -0.32 },
+      ];
       const heroSprite = new Image();
       heroSprite.src = "tanner-sprites.png";
       let hero = { x: 475, y: 280, dir: "down", movingUntil: 0, swingUntil: 0 },
@@ -437,17 +694,30 @@
       function save() {
         localStorage.setItem(
           "tanner-sword-v1",
-          JSON.stringify({ freed: [...freed], score, soundOn, reducedMotion }),
+          JSON.stringify({
+            freed: [...freed],
+            score,
+            foundScrolls: [...foundScrolls],
+            bossStage,
+            bossDefeated,
+            soundOn,
+            reducedMotion,
+          }),
         );
       }
       function update() {
         document.querySelector("#progress").textContent =
           `Shadows freed: ${freed.size} / 5`;
         document.querySelector("#score").textContent = `Light: ${score}`;
-        document.querySelector("#status").textContent =
-          freed.size === 5
-            ? "Mission complete! Albany shines!"
-            : "Mission: Find the shadows";
+        document.querySelector("#scrolls").textContent =
+          `Scrolls: ${foundScrolls.size} / 3`;
+        document.querySelector("#status").textContent = bossDefeated
+          ? "Victory! Albany shines!"
+          : freed.size === 5
+            ? `Final shadow: ${bossStage} / 3`
+            : freed.size >= 2
+              ? "Shield of Faith unlocked"
+              : "Mission: Find the shadows";
       }
       function box(x, y, w, h, color) {
         ctx.fillStyle = color;
@@ -505,6 +775,31 @@
           ctx.arc(x - 4, y - 4, 10, 0, Math.PI * 2);
           ctx.fill();
         }
+        scrolls.forEach((s, i) => {
+          if (foundScrolls.has(i)) return;
+          ctx.save();
+          ctx.translate(s.x, s.y);
+          ctx.rotate(Math.sin(tick * 0.03 + i) * 0.08);
+          box(-9, -12, 18, 24, "#f6df9a");
+          box(-6, -9, 12, 18, "#8f6d31");
+          label("✦", 0, 5, "#fff4b0", "bold 15px system-ui");
+          ctx.restore();
+        });
+        roamingShadows.forEach((w, i) => {
+          if (!reducedMotion) {
+            w.x += w.vx;
+            w.y += w.vy;
+            if (w.x < 35 || w.x > 925) w.vx *= -1;
+            if (w.y < 35 || w.y > 500) w.vy *= -1;
+          }
+          ctx.fillStyle = "rgba(25,12,45,.55)";
+          ctx.beginPath();
+          ctx.arc(w.x, w.y, 12 + Math.sin(tick * 0.05 + i) * 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#9f87c4";
+          ctx.fillRect(w.x - 5, w.y - 2, 3, 3);
+          ctx.fillRect(w.x + 2, w.y - 2, 3, 3);
+        });
         people.forEach((p, i) => {
           let done = freed.has(i),
             pulse = Math.sin(tick * 0.06 + i) * 4;
@@ -541,11 +836,38 @@
             "bold 12px system-ui",
           );
         });
+        if (freed.size === 5 && !bossDefeated) {
+          const pulse = 38 + Math.sin(tick * 0.05) * 8;
+          ctx.fillStyle = "rgba(14,4,28,.78)";
+          ctx.beginPath();
+          ctx.arc(boss.x, boss.y, pulse, 0, Math.PI * 2);
+          ctx.fill();
+          label(
+            "THE GREAT DARKNESS",
+            boss.x,
+            boss.y + 58,
+            "#f0c6ff",
+            "bold 13px system-ui",
+          );
+        }
         // Hero sprite: idle, walking and sword-raise rows; code-drawn fallback while loading.
         ctx.fillStyle = "rgba(255,225,122,.18)";
         ctx.beginPath();
         ctx.arc(hero.x, hero.y, 25, 0, Math.PI * 2);
         ctx.fill();
+        if (freed.size >= 2) {
+          ctx.strokeStyle = "rgba(125,225,255,.8)";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(
+            hero.x,
+            hero.y - 10,
+            32 + Math.sin(tick * 0.05) * 2,
+            0,
+            Math.PI * 2,
+          );
+          ctx.stroke();
+        }
         if (heroSprite.complete && heroSprite.naturalWidth) {
           const dirs = { down: 0, left: 1, right: 2, up: 3 };
           const now = performance.now();
@@ -621,6 +943,12 @@
             idx = i;
           }
         });
+        if (
+          freed.size === 5 &&
+          !bossDefeated &&
+          Math.hypot(hero.x - boss.x, hero.y - boss.y) < 90
+        )
+          return "boss";
         return idx;
       }
       function interact() {
@@ -632,7 +960,38 @@
           return;
         }
         active = i;
+        if (i === "boss") {
+          hero.swingUntil = performance.now() + (reducedMotion ? 180 : 850);
+          const c = document.querySelector("#cinematic");
+          c.textContent = "⚔️ The final darkness gathers over the city…";
+          c.style.display = "block";
+          tone(120, 0.2);
+          setTimeout(
+            () => {
+              c.style.display = "none";
+              openBossStage();
+            },
+            reducedMotion ? 220 : 900,
+          );
+          return;
+        }
         let p = people[i];
+        locked = true;
+        hero.swingUntil = performance.now() + (reducedMotion ? 180 : 850);
+        const cinematic = document.querySelector("#cinematic");
+        cinematic.textContent = `⚔️ The shadow of ${p.shadow.toLowerCase()} rises…`;
+        cinematic.style.display = "block";
+        tone(220, 0.12);
+        setTimeout(
+          () => {
+            cinematic.style.display = "none";
+            locked = false;
+            openChallenge(p);
+          },
+          reducedMotion ? 220 : 900,
+        );
+      }
+      function openChallenge(p) {
         D.style.display = "block";
         document.querySelector("#questionTitle").textContent =
           `⚔️ Shadow of ${p.shadow}`;
@@ -652,6 +1011,10 @@
       }
       function answer(j) {
         if (active === null || locked) return;
+        if (active === "boss") {
+          answerBoss(j);
+          return;
+        }
         let p = people[active];
         if (j !== p.correct) {
           document.querySelector("#feedback").textContent =
@@ -688,11 +1051,89 @@
           .querySelectorAll("button")
           .forEach((b) => (b.disabled = true));
         document.querySelector("#close").style.display = "inline-block";
+        D.style.display = "none";
+        const cinematic = document.querySelector("#cinematic");
+        cinematic.textContent = "✨ Truth breaks through the darkness!";
+        cinematic.style.display = "block";
         msg.textContent =
           freed.size === 5
             ? "🏆 Albany shines! All five residents are free. Mission complete!"
             : `✨ ${p.name} has been freed. Find the next shadow!`;
-        locked = false;
+        setTimeout(
+          () => {
+            cinematic.style.display = "none";
+            D.style.display = "block";
+            document.querySelector("#close").focus();
+            locked = false;
+          },
+          reducedMotion ? 260 : 1100,
+        );
+      }
+      function openBossStage() {
+        const q = bossQuestions[bossStage];
+        D.style.display = "block";
+        document.querySelector("#questionTitle").textContent =
+          `⚔️ Final Shadow · Truth ${bossStage + 1} of 3`;
+        document.querySelector("#story").textContent =
+          "The darkness cannot be defeated by force. Discern the truth and stand firm.";
+        document.querySelector("#prompt").textContent = q.prompt;
+        document.querySelector("#feedback").textContent = "";
+        document.querySelector("#close").style.display = "none";
+        const a = document.querySelector("#answers");
+        a.innerHTML = "";
+        q.answers.forEach((s, j) => {
+          const b = document.createElement("button");
+          b.textContent = String.fromCharCode(65 + j) + ". " + s;
+          b.onclick = () => answer(j);
+          a.appendChild(b);
+        });
+        a.querySelector("button").focus();
+      }
+      function answerBoss(j) {
+        const q = bossQuestions[bossStage];
+        if (j !== q.correct) {
+          score = Math.max(0, score - 15);
+          document.querySelector("#feedback").textContent =
+            "That does not answer this stage. Think carefully about what Scripture teaches.";
+          update();
+          save();
+          tone(140, 0.08);
+          return;
+        }
+        locked = true;
+        bossStage++;
+        score += 150;
+        D.style.display = "none";
+        hero.swingUntil = performance.now() + (reducedMotion ? 180 : 900);
+        flash = reducedMotion ? 5 : 30;
+        tone(820, 0.2);
+        const c = document.querySelector("#cinematic");
+        c.textContent =
+          bossStage === 3
+            ? "☀️ Jesus is the Light—the darkness retreats!"
+            : `✨ Truth ${bossStage} breaks the darkness!`;
+        c.style.display = "block";
+        if (bossStage >= 3) {
+          bossDefeated = true;
+          score += 300;
+          msg.textContent =
+            "🏆 The Great Darkness is defeated. Albany shines—and Jesus receives the glory!";
+        }
+        save();
+        update();
+        setTimeout(
+          () => {
+            c.style.display = "none";
+            if (bossDefeated) {
+              active = null;
+              locked = false;
+            } else {
+              locked = false;
+              openBossStage();
+            }
+          },
+          reducedMotion ? 300 : 1200,
+        );
       }
       function close() {
         D.style.display = "none";
@@ -704,6 +1145,9 @@
         if (confirm("Start a new mission and erase this saved progress?")) {
           freed = new Set();
           score = 0;
+          foundScrolls = new Set();
+          bossStage = 0;
+          bossDefeated = false;
           hero = { x: 475, y: 280, dir: "down", movingUntil: 0, swingUntil: 0 };
           save();
           update();
@@ -712,6 +1156,7 @@
         }
       };
       function move(dir) {
+        if (active !== null) return;
         const s = 13;
         hero.dir = dir;
         hero.movingUntil = performance.now() + 180;
@@ -725,6 +1170,39 @@
           25,
           500,
         );
+        scrolls.forEach((s, i) => {
+          if (
+            !foundScrolls.has(i) &&
+            Math.hypot(hero.x - s.x, hero.y - s.y) < 34
+          ) {
+            foundScrolls.add(i);
+            score += 25;
+            tone(880, 0.12);
+            msg.textContent = `📜 Hidden Scripture found: ${s.ref}. +25 Light`;
+            save();
+            update();
+          }
+        });
+        if (freed.size < 2) {
+          const near = roamingShadows.some(
+            (w) => Math.hypot(hero.x - w.x, hero.y - w.y) < 22,
+          );
+          if (near) {
+            hero.x = clamp(
+              hero.x + (dir === "left" ? 18 : dir === "right" ? -18 : 0),
+              20,
+              940,
+            );
+            hero.y = clamp(
+              hero.y + (dir === "up" ? 18 : dir === "down" ? -18 : 0),
+              25,
+              500,
+            );
+            msg.textContent =
+              "A roaming shadow pushed you back. Free two residents to unlock the Shield of Faith.";
+            tone(150, 0.08);
+          }
+        }
       }
       document.querySelectorAll("[data-dir]").forEach((b) => {
         let timer;
