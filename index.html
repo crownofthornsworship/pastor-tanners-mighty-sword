@@ -953,8 +953,11 @@
           const now = performance.now();
           const row =
             now < hero.swingUntil ? 2 : now < hero.movingUntil ? 1 : 0;
-          const sw = heroSprite.naturalWidth / 4,
-            sh = heroSprite.naturalHeight / 3;
+          const sw = heroSprite.naturalWidth / 4;
+          // The generated poses overlap the nominal equal-height rows.
+          // Custom vertical crops preserve Tanner's head and the full sword.
+          const sourceY = row === 0 ? 0 : row === 1 ? 322 : 620;
+          const sourceHeight = row === 0 ? 322 : row === 1 ? 362 : 466;
           // The running row contains two right-facing poses. Use one clean
           // profile and mirror it so movement and idle always agree.
           const horizontal = hero.dir === "left" || hero.dir === "right";
@@ -973,9 +976,9 @@
           ctx.drawImage(
             heroSprite,
             sourceColumn * sw,
-            row * sh,
+            sourceY,
             sw,
-            sh,
+            sourceHeight,
             hero.x - 48,
             hero.y - 62,
             96,
