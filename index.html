@@ -252,6 +252,62 @@
         box-shadow: 0 0 35px #ffd86a88;
         text-align: center;
       }
+      #victory {
+        display: none;
+        position: absolute;
+        inset: 0;
+        z-index: 12;
+        place-items: center;
+        padding: 18px;
+        text-align: center;
+        background:
+          radial-gradient(circle at center, rgba(255, 226, 128, 0.38), transparent 48%),
+          rgba(3, 9, 20, 0.9);
+      }
+      #victory.show {
+        display: grid;
+        animation: victoryGlow 900ms ease-out;
+      }
+      .victory-card {
+        width: min(540px, 94%);
+        padding: clamp(18px, 4vw, 34px);
+        border: 3px solid #ffe18a;
+        border-radius: 20px;
+        color: #fff8df;
+        background: linear-gradient(160deg, #172843f2, #0a1224f5);
+        box-shadow: 0 0 70px #ffd96999;
+      }
+      .victory-card h2 {
+        margin: 4px 0 8px;
+        color: #ffe18a;
+        font-size: clamp(25px, 6vw, 48px);
+      }
+      .victory-card .victory-mark {
+        font-size: clamp(38px, 9vw, 72px);
+      }
+      .victory-stats {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 16px 0;
+      }
+      .victory-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      #keepExploring {
+        color: white;
+        background: #344a68;
+      }
+      @keyframes victoryGlow {
+        from {
+          opacity: 0;
+          transform: scale(1.06);
+        }
+      }
       footer {
         font-size: 12px;
         color: #aab4cb;
@@ -514,6 +570,22 @@
           aria-label="Top-down adventure game map"
         ></canvas>
         <div id="cinematic" aria-live="polite"></div>
+        <section id="victory" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
+          <div class="victory-card">
+            <div class="victory-mark">🏆☀️</div>
+            <small>THE GREAT DARKNESS HAS BEEN DEFEATED</small>
+            <h2 id="victoryTitle">Level One Complete!</h2>
+            <p>Albany shines again. The residents are free, and Jesus receives the glory!</p>
+            <div class="victory-stats">
+              <span class="pill" id="victoryScore"></span>
+              <span class="pill" id="victoryScrolls"></span>
+            </div>
+            <div class="victory-actions">
+              <button id="keepExploring">Keep Exploring</button>
+              <button id="playAgain">Play Level Again</button>
+            </div>
+          </div>
+        </section>
         <section
           id="dialog"
           role="dialog"
@@ -734,6 +806,23 @@
         osc.connect(gain).connect(audioContext.destination);
         osc.start();
         osc.stop(audioContext.currentTime + duration);
+      }
+      function victoryFanfare() {
+        if (!soundOn) return;
+        [523, 659, 784, 1047].forEach((note, i) =>
+          setTimeout(() => tone(note, i === 3 ? 0.42 : 0.18), i * 150),
+        );
+      }
+      function showVictory() {
+        const victory = document.querySelector("#victory");
+        document.querySelector("#victoryScore").textContent =
+          `✨ ${score} Light`;
+        document.querySelector("#victoryScrolls").textContent =
+          `📜 ${foundScrolls.size} / 3 Scrolls`;
+        victory.classList.add("show");
+        flash = reducedMotion ? 5 : 30;
+        victoryFanfare();
+        document.querySelector("#keepExploring").focus();
       }
       const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
       function save() {
@@ -1227,6 +1316,7 @@
             if (bossDefeated) {
               active = null;
               locked = false;
+              showVictory();
             } else {
               locked = false;
               openBossStage();
@@ -1240,6 +1330,14 @@
         active = null;
       }
       document.querySelector("#close").onclick = close;
+      document.querySelector("#keepExploring").onclick = () => {
+        document.querySelector("#victory").classList.remove("show");
+        canvas.focus();
+      };
+      document.querySelector("#playAgain").onclick = () => {
+        document.querySelector("#victory").classList.remove("show");
+        document.querySelector("#reset").click();
+      };
       document.querySelector("#interact").onclick = interact;
       document.querySelector("#reset").onclick = () => {
         if (confirm("Start a new mission and erase this saved progress?")) {
@@ -1393,6 +1491,7 @@
         document.querySelector("#titleScreen").remove();
         tone(523, 0.09);
         canvas.focus();
+        if (bossDefeated) setTimeout(showVictory, 350);
       };
       const soundButton = document.querySelector("#sound"),
         motionButton = document.querySelector("#motion");
