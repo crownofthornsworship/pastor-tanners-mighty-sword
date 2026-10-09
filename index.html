@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1"
+    />
+    <title>Pastor Tanner's Mighty Sword</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #090e1a;
+        color: #f8f3e8;
+        font-family: system-ui, Arial;
+      }
+      #titleScreen {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          linear-gradient(90deg, rgba(4, 9, 22, 0.92), rgba(4, 9, 22, 0.12)),
+          url("title-screen.png") center/cover no-repeat;
+      }
+      .title-card {
+        width: min(680px, 94vw);
+        margin-right: auto;
+        padding: clamp(22px, 5vw, 54px);
+        border: 1px solid rgba(255, 219, 132, 0.55);
+        border-radius: 22px;
+        background: rgba(7, 14, 32, 0.8);
+        box-shadow: 0 24px 80px #000a;
+        backdrop-filter: blur(6px);
+      }
+      .title-card h2 {
+        margin: 0 0 10px;
+        color: #ffe299;
+        font:
+          900 clamp(34px, 7vw, 72px) / 0.92 Georgia,
+          serif;
+        text-shadow: 0 4px 20px #000;
+      }
+      .title-card p {
+        max-width: 48ch;
+        line-height: 1.55;
+      }
+      .title-card button {
+        font-size: 18px;
+        padding: 14px 22px;
+      }
+      header {
+        padding: 12px 16px;
+        background: #151d30;
+        border-bottom: 2px solid #d8a84e;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: center;
+      }
+      h1 {
+        font-size: clamp(16px, 3vw, 25px);
+        margin: 0;
+        color: #f6d17a;
+      }
+      small {
+        color: #d9dfef;
+      }
+      main {
+        max-width: 1100px;
+        margin: auto;
+        padding: 10px;
+      }
+      .wrap {
+        position: relative;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        background: #182b32;
+        border: 3px solid #7b6a45;
+        border-radius: 12px;
+        image-rendering: pixelated;
+      }
+      .hud {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 8px 0;
+        flex-wrap: wrap;
+      }
+      .pill {
+        background: #1a2840;
+        padding: 8px 12px;
+        border-radius: 30px;
+      }
+      .panel {
+        background: #111a2c;
+        border: 1px solid #677899;
+        border-radius: 12px;
+        padding: 14px;
+        margin-top: 12px;
+      }
+      button {
+        background: #e9ba5b;
+        border: 0;
+        color: #1c1720;
+        border-radius: 9px;
+        padding: 11px 15px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      button:hover,
+      button:focus {
+        background: #ffe29d;
+      }
+      button:disabled {
+        opacity: 0.45;
+      }
+      #dialog {
+        display: none;
+        position: absolute;
+        inset: 5% 5%;
+        background: rgba(10, 16, 31, 0.97);
+        border: 2px solid #dcb760;
+        border-radius: 12px;
+        overflow: auto;
+        padding: clamp(12px, 3vw, 25px);
+        z-index: 3;
+      }
+      #dialog h2 {
+        color: #ffdf8d;
+        margin: 0 0 8px;
+      }
+      #answers {
+        display: grid;
+        gap: 9px;
+        margin: 16px 0;
+      }
+      #answers button {
+        text-align: left;
+        background: #293e5b;
+        color: white;
+        border: 1px solid #7289a8;
+      }
+      #answers button:hover {
+        background: #42678a;
+      }
+      #feedback {
+        min-height: 24px;
+        font-weight: 700;
+      }
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .dpad {
+        display: grid;
+        grid-template-columns: repeat(3, 54px);
+        gap: 3px;
+      }
+      .dpad button {
+        height: 49px;
+        padding: 0;
+        font-size: 22px;
+      }
+      .dpad .empty {
+        visibility: hidden;
+      }
+      .help {
+        font-size: 13px;
+        color: #c3cce0;
+        line-height: 1.5;
+      }
+      #message {
+        color: #ffdc8d;
+        min-height: 24px;
+      }
+      footer {
+        font-size: 12px;
+        color: #aab4cb;
+        text-align: center;
+        margin: 14px;
+      }
+      #reset {
+        background: #36455f;
+        color: white;
+      }
+      .header-actions {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        justify-content: end;
+      }
+      .header-actions button {
+        padding: 9px 11px;
+      }
+      @media (min-width: 750px) {
+        .dpad {
+          opacity: 0.65;
+        }
+      }
+      @media (max-width: 480px) {
+        #dialog {
+          inset: 2% 2%;
+        }
+        .controls {
+          align-items: end;
+          flex-direction: column;
+        }
+        .title-card {
+          margin: auto;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section id="titleScreen" aria-labelledby="gameTitle">
+      <div class="title-card">
+        <small>LIGHT &amp; LIFE GAMES PRESENTS</small>
+        <h2 id="gameTitle">Pastor Tanner's Mighty Sword</h2>
+        <p>
+          The darkness has fallen over a fictionalized Albany. Listen to its
+          residents, identify the struggle behind each shadow, and answer with
+          biblical truth. The sword defeats shadows—never people.
+        </p>
+        <button id="startGame">Begin the Mission</button>
+      </div>
+    </section>
+    <header>
+      <div>
+        <h1>⚔️ PASTOR TANNER'S MIGHTY SWORD</h1>
+        <small>The Word Is Our Weapon · Downtown Albany Demo</small>
+      </div>
+      <div class="header-actions">
+        <button id="sound" aria-pressed="true">🔊 Sound</button>
+        <button id="motion" aria-pressed="false">✨ Motion</button>
+        <button id="reset">New Game</button>
+      </div>
+    </header>
+    <main>
+      <div class="hud">
+        <span class="pill" id="progress">Shadows freed: 0 / 5</span
+        ><span class="pill" id="score">Light: 0</span
+        ><span class="pill" id="status">Mission: Find the shadows</span>
+      </div>
+      <div class="wrap">
+        <canvas
+          id="game"
+          width="960"
+          height="576"
+          tabindex="0"
+          aria-label="Top-down adventure game map"
+        ></canvas>
+        <section
+          id="dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="questionTitle"
+        >
+          <h2 id="questionTitle"></h2>
+          <p id="story"></p>
+          <p id="prompt"></p>
+          <div id="answers"></div>
+          <p id="feedback" aria-live="polite"></p>
+          <button id="close">Return to the city</button>
+        </section>
+      </div>
+      <div class="panel controls">
+        <div>
+          <b>Move Pastor Tanner</b>
+          <p class="help">
+            Arrow keys / WASD or touch arrows. Walk near a resident and press
+            Space / Enter or tap CONFRONT. Choose the Scripture that speaks to
+            the struggle. No people are harmed.
+          </p>
+          <p id="message" aria-live="polite">
+            Welcome! The shadows have fallen over Albany. Bring the light.
+          </p>
+          <button id="interact">⚔️ CONFRONT SHADOW</button>
+        </div>
+        <div class="dpad">
+          <span class="empty"></span
+          ><button data-dir="up" aria-label="Move up">▲</button
+          ><span class="empty"></span
+          ><button data-dir="left" aria-label="Move left">◀</button
+          ><button data-dir="down" aria-label="Move down">▼</button
+          ><button data-dir="right" aria-label="Move right">▶</button>
+        </div>
+      </div>
+      <footer>
+        Fictional residents and situations · Scripture references used for
+        learning · Public preview v0.2
+      </footer>
+    </main>
+    <script>
+      "use strict";
+      const canvas = document.querySelector("#game"),
+        ctx = canvas.getContext("2d"),
+        D = document.querySelector("#dialog"),
+        msg = document.querySelector("#message");
+      const people = [
+        {
+          x: 210,
+          y: 164,
+          name: "Morgan",
+          shadow: "ANGER",
+          story:
+            "“I keep exploding at the people I love. I don’t know how to stop.”",
+          prompt: "Which passage teaches us to be slow to anger?",
+          answers: [
+            "James 1:19–20 — Be quick to listen, slow to speak and slow to anger.",
+            "Genesis 6:14 — Build an ark.",
+            "John 11:35 — Jesus wept.",
+          ],
+          correct: 0,
+          explain:
+            "James 1:19–20 calls us to listen first and turn from anger.",
+        },
+        {
+          x: 728,
+          y: 148,
+          name: "Alex",
+          shadow: "FEAR",
+          story: "“Everything feels uncertain. I’m afraid of tomorrow.”",
+          prompt: "Which Scripture speaks directly to fear and God’s presence?",
+          answers: [
+            "Proverbs 6:6 — Consider the ant.",
+            "Isaiah 41:10 — Do not fear, for I am with you.",
+            "Luke 2:7 — The child was laid in a manger.",
+          ],
+          correct: 1,
+          explain:
+            "Isaiah 41:10 reminds us that God strengthens and helps his people.",
+        },
+        {
+          x: 760,
+          y: 420,
+          name: "Jordan",
+          shadow: "UNFORGIVENESS",
+          story: "“Someone hurt me. I’m holding on to resentment.”",
+          prompt: "Which passage calls believers to forgive?",
+          answers: [
+            "Psalm 150:6 — Let everything that breathes praise the Lord.",
+            "Genesis 1:3 — Let there be light.",
+            "Ephesians 4:32 — Be kind, compassionate, and forgiving.",
+          ],
+          correct: 2,
+          explain:
+            "Ephesians 4:32 connects forgiveness to the forgiveness we receive in Christ.",
+        },
+        {
+          x: 440,
+          y: 437,
+          name: "Sam",
+          shadow: "PRIDE",
+          story:
+            "“I think I’m better than everyone else. I don’t need anyone.”",
+          prompt: "Which passage teaches humility?",
+          answers: [
+            "Philippians 2:3–4 — In humility value others above yourselves.",
+            "Exodus 20:12 — Honor your father and mother.",
+            "Matthew 14:19 — Jesus broke the loaves.",
+          ],
+          correct: 0,
+          explain:
+            "Philippians 2:3–4 challenges selfish ambition and invites humble care for others.",
+        },
+        {
+          x: 130,
+          y: 420,
+          name: "Taylor",
+          shadow: "TEMPTATION",
+          story: "“I feel trapped in a pattern I keep returning to.”",
+          prompt: "Which Scripture teaches about resisting temptation?",
+          answers: [
+            "Psalm 19:1 — The heavens declare God’s glory.",
+            "1 Corinthians 10:13 — God provides a way to endure temptation.",
+            "Acts 27:38 — They lightened the ship.",
+          ],
+          correct: 1,
+          explain:
+            "1 Corinthians 10:13 points to God’s faithfulness and the way to endure temptation.",
+        },
+      ];
+      let saved = {};
+      try {
+        saved = JSON.parse(localStorage.getItem("tanner-sword-v1") || "{}");
+      } catch {
+        localStorage.removeItem("tanner-sword-v1");
+      }
+      let freed = new Set(Array.isArray(saved.freed) ? saved.freed : []),
+        score = Number(saved.score) || 0;
+      const heroSprite = new Image();
+      heroSprite.src = "tanner-sprites.png";
+      let hero = { x: 475, y: 280, dir: "down", movingUntil: 0, swingUntil: 0 },
+        keys = new Set(),
+        active = null,
+        locked = false,
+        particles = [],
+        flash = 0,
+        tick = 0;
+      let soundOn = saved.soundOn !== false;
+      let reducedMotion =
+        saved.reducedMotion ??
+        matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let audioContext;
+      function tone(freq = 440, duration = 0.08) {
+        if (!soundOn) return;
+        audioContext ||= new (window.AudioContext ||
+          window.webkitAudioContext)();
+        const osc = audioContext.createOscillator(),
+          gain = audioContext.createGain();
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.05, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(
+          0.001,
+          audioContext.currentTime + duration,
+        );
+        osc.connect(gain).connect(audioContext.destination);
+        osc.start();
+        osc.stop(audioContext.currentTime + duration);
+      }
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+      function save() {
+        localStorage.setItem(
+          "tanner-sword-v1",
+          JSON.stringify({ freed: [...freed], score, soundOn, reducedMotion }),
+        );
+      }
+      function update() {
+        document.querySelector("#progress").textContent =
+          `Shadows freed: ${freed.size} / 5`;
+        document.querySelector("#score").textContent = `Light: ${score}`;
+        document.querySelector("#status").textContent =
+          freed.size === 5
+            ? "Mission complete! Albany shines!"
+            : "Mission: Find the shadows";
+      }
+      function box(x, y, w, h, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, w, h);
+      }
+      function label(s, x, y, color = "#fff", font = "bold 14px system-ui") {
+        ctx.fillStyle = color;
+        ctx.font = font;
+        ctx.textAlign = "center";
+        ctx.fillText(s, x, y);
+      }
+      function draw() {
+        tick++;
+        box(0, 0, 960, 576, "#244139");
+        for (let x = 0; x < 960; x += 42)
+          for (let y = 0; y < 576; y += 42) {
+            box(x + 8, y + 6, 3, 3, "#35594a");
+            box(x + 25, y + 28, 2, 4, "#46715a");
+          }
+        box(0, 248, 960, 82, "#666d72");
+        box(325, 0, 100, 576, "#686e72");
+        for (let x = 0; x < 960; x += 64) box(x, 287, 34, 4, "#d6bd78");
+        for (let y = 0; y < 576; y += 70) box(372, y, 5, 35, "#d6bd78");
+        // Church, houses, park, river
+        box(22, 25, 260, 100, "#3e4e68");
+        box(34, 37, 236, 74, "#677c99");
+        box(124, 90, 55, 35, "#d9b35e");
+        label("VERBATIM CHURCH", 152, 67, "#fff3c4");
+        label("HEADQUARTERS", 152, 86, "#fff3c4", "12px system-ui");
+        for (const [x, y, c] of [
+          [508, 30, "#9b786b"],
+          [785, 25, "#8b7e9c"],
+          [36, 353, "#ad8a63"],
+          [522, 375, "#758da1"],
+        ]) {
+          box(x, y, 130, 88, "#303f46");
+          box(x + 9, y + 8, 112, 70, c);
+          box(x + 47, y + 49, 32, 29, "#ddca9c");
+          box(x + 18, y + 23, 24, 22, "#bde1ed");
+        }
+        box(0, 515, 960, 61, "#266d8b");
+        for (let i = 0; i < 13; i++)
+          box((i * 93 + tick) % 960, 535 + (i % 3) * 10, 42, 3, "#74c8d9");
+        label("WILLAMETTE RIVER", 775, 562, "#d4f4ff");
+        for (let i = 0; i < 24; i++) {
+          let x = (i * 127 + 40) % 960,
+            y = (i * 89 + 170) % 480;
+          if ((x > 320 && x < 440) || (y > 244 && y < 337)) continue;
+          ctx.fillStyle = "#315d40";
+          ctx.beginPath();
+          ctx.arc(x, y, 14, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#4b8050";
+          ctx.beginPath();
+          ctx.arc(x - 4, y - 4, 10, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        people.forEach((p, i) => {
+          let done = freed.has(i),
+            pulse = Math.sin(tick * 0.06 + i) * 4;
+          if (!done) {
+            ctx.fillStyle = "rgba(9,4,25,.65)";
+            ctx.beginPath();
+            ctx.ellipse(
+              p.x,
+              p.y - 27,
+              28 + pulse,
+              20 + pulse / 2,
+              0,
+              0,
+              Math.PI * 2,
+            );
+            ctx.fill();
+            label("☁", p.x, p.y - 24, "#a38cbf", "bold 25px system-ui");
+          } else {
+            ctx.fillStyle = "rgba(250,224,117,.35)";
+            ctx.beginPath();
+            ctx.arc(p.x, p.y - 12, 32, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          box(p.x - 9, p.y - 8, 18, 25, done ? "#f1d17d" : "#a3b5d4");
+          ctx.fillStyle = "#e5b58d";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y - 13, 10, 0, Math.PI * 2);
+          ctx.fill();
+          label(
+            done ? "✦ FREED" : p.shadow,
+            p.x,
+            p.y + 35,
+            done ? "#ffefb4" : "#ffe0f6",
+            "bold 12px system-ui",
+          );
+        });
+        // Hero sprite: idle, walking and sword-raise rows; code-drawn fallback while loading.
+        ctx.fillStyle = "rgba(255,225,122,.18)";
+        ctx.beginPath();
+        ctx.arc(hero.x, hero.y, 25, 0, Math.PI * 2);
+        ctx.fill();
+        if (heroSprite.complete && heroSprite.naturalWidth) {
+          const dirs = { down: 0, left: 1, right: 2, up: 3 };
+          const now = performance.now();
+          const row =
+            now < hero.swingUntil ? 2 : now < hero.movingUntil ? 1 : 0;
+          const sw = heroSprite.naturalWidth / 4,
+            sh = heroSprite.naturalHeight / 3;
+          ctx.drawImage(
+            heroSprite,
+            dirs[hero.dir] * sw,
+            row * sh,
+            sw,
+            sh,
+            hero.x - 48,
+            hero.y - 62,
+            96,
+            72,
+          );
+        } else {
+          box(hero.x - 13, hero.y + 5, 11, 19, "#25293b");
+          box(hero.x + 2, hero.y + 5, 11, 19, "#25293b");
+          box(hero.x - 17, hero.y - 16, 34, 27, "#283c55");
+          ctx.fillStyle = "#e8b88e";
+          ctx.beginPath();
+          ctx.arc(hero.x, hero.y - 24, 14, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#9d572e";
+          ctx.beginPath();
+          ctx.moveTo(hero.x - 12, hero.y - 20);
+          ctx.lineTo(hero.x + 12, hero.y - 20);
+          ctx.lineTo(hero.x + 7, hero.y - 6);
+          ctx.lineTo(hero.x, hero.y - 2);
+          ctx.lineTo(hero.x - 8, hero.y - 6);
+          ctx.fill();
+          ctx.strokeStyle = "#fff1a4";
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.moveTo(hero.x + 15, hero.y - 7);
+          ctx.lineTo(hero.x + 36, hero.y - 43);
+          ctx.stroke();
+        }
+        ctx.strokeStyle = "#76e7ff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(hero.x + 15, hero.y - 7);
+        ctx.lineTo(hero.x + 36, hero.y - 43);
+        ctx.stroke();
+        label("PASTOR TANNER", hero.x, hero.y + 43, "#fff1ae");
+        particles = particles.filter((p) => p.life > 0);
+        particles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life--;
+          ctx.globalAlpha = p.life / 65;
+          box(p.x, p.y, 5, 5, p.c);
+          ctx.globalAlpha = 1;
+        });
+        if (flash > 0) {
+          ctx.fillStyle = `rgba(255,232,143,${(flash / 30) * 0.4})`;
+          ctx.fillRect(0, 0, 960, 576);
+          flash--;
+        }
+        requestAnimationFrame(draw);
+      }
+      function nearest() {
+        let idx = -1,
+          best = 72;
+        people.forEach((p, i) => {
+          if (freed.has(i)) return;
+          let d = Math.hypot(hero.x - p.x, hero.y - p.y);
+          if (d < best) {
+            best = d;
+            idx = i;
+          }
+        });
+        return idx;
+      }
+      function interact() {
+        if (active !== null) return;
+        let i = nearest();
+        if (i < 0) {
+          msg.textContent =
+            "Get closer to a resident with a shadow, then confront it.";
+          return;
+        }
+        active = i;
+        let p = people[i];
+        D.style.display = "block";
+        document.querySelector("#questionTitle").textContent =
+          `⚔️ Shadow of ${p.shadow}`;
+        document.querySelector("#story").textContent = `${p.name}: ${p.story}`;
+        document.querySelector("#prompt").textContent = p.prompt;
+        document.querySelector("#feedback").textContent = "";
+        document.querySelector("#close").style.display = "none";
+        let a = document.querySelector("#answers");
+        a.innerHTML = "";
+        p.answers.forEach((s, j) => {
+          let b = document.createElement("button");
+          b.textContent = String.fromCharCode(65 + j) + ". " + s;
+          b.onclick = () => answer(j);
+          a.appendChild(b);
+        });
+        a.querySelector("button").focus();
+      }
+      function answer(j) {
+        if (active === null || locked) return;
+        let p = people[active];
+        if (j !== p.correct) {
+          document.querySelector("#feedback").textContent =
+            "Not quite. Read the situation and try another passage.";
+          score = Math.max(0, score - 10);
+          update();
+          save();
+          return;
+        }
+        locked = true;
+        freed.add(active);
+        score += 100;
+        save();
+        update();
+        flash = reducedMotion ? 5 : 30;
+        hero.swingUntil = performance.now() + (reducedMotion ? 120 : 650);
+        tone(740, 0.16);
+        for (let k = 0; k < (reducedMotion ? 15 : 85); k++) {
+          let a = Math.random() * Math.PI * 2,
+            s = 1 + Math.random() * 6;
+          particles.push({
+            x: p.x,
+            y: p.y - 25,
+            vx: Math.cos(a) * s,
+            vy: Math.sin(a) * s,
+            life: 65,
+            c: Math.random() > 0.5 ? "#ffe188" : "#a3f9ff",
+          });
+        }
+        document.querySelector("#feedback").textContent =
+          `✨ SHADOW DEFEATED! ${p.explain} +100 LIGHT`;
+        document
+          .querySelector("#answers")
+          .querySelectorAll("button")
+          .forEach((b) => (b.disabled = true));
+        document.querySelector("#close").style.display = "inline-block";
+        msg.textContent =
+          freed.size === 5
+            ? "🏆 Albany shines! All five residents are free. Mission complete!"
+            : `✨ ${p.name} has been freed. Find the next shadow!`;
+        locked = false;
+      }
+      function close() {
+        D.style.display = "none";
+        active = null;
+      }
+      document.querySelector("#close").onclick = close;
+      document.querySelector("#interact").onclick = interact;
+      document.querySelector("#reset").onclick = () => {
+        if (confirm("Start a new mission and erase this saved progress?")) {
+          freed = new Set();
+          score = 0;
+          hero = { x: 475, y: 280, dir: "down", movingUntil: 0, swingUntil: 0 };
+          save();
+          update();
+          close();
+          msg.textContent = "New mission started.";
+        }
+      };
+      function move(dir) {
+        const s = 13;
+        hero.dir = dir;
+        hero.movingUntil = performance.now() + 180;
+        hero.x = clamp(
+          hero.x + (dir === "left" ? -s : dir === "right" ? s : 0),
+          20,
+          940,
+        );
+        hero.y = clamp(
+          hero.y + (dir === "up" ? -s : dir === "down" ? s : 0),
+          25,
+          500,
+        );
+      }
+      document.querySelectorAll("[data-dir]").forEach((b) => {
+        let timer;
+        b.addEventListener("pointerdown", (e) => {
+          e.preventDefault();
+          move(b.dataset.dir);
+          timer = setInterval(() => move(b.dataset.dir), 90);
+        });
+        for (let ev of ["pointerup", "pointercancel", "pointerleave"])
+          b.addEventListener(ev, () => clearInterval(timer));
+      });
+      window.addEventListener("keydown", (e) => {
+        if (
+          ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(
+            e.key,
+          )
+        )
+          e.preventDefault();
+        if (active !== null) {
+          if (
+            e.key === "Escape" &&
+            document.querySelector("#close").style.display !== "none"
+          )
+            close();
+          return;
+        }
+        let m = {
+          ArrowUp: "up",
+          w: "up",
+          ArrowDown: "down",
+          s: "down",
+          ArrowLeft: "left",
+          a: "left",
+          ArrowRight: "right",
+          d: "right",
+        };
+        if (m[e.key]) move(m[e.key]);
+        if (e.key === " " || e.key === "Enter") interact();
+      });
+      document.querySelector("#startGame").onclick = () => {
+        document.querySelector("#titleScreen").remove();
+        tone(523, 0.09);
+        canvas.focus();
+      };
+      const soundButton = document.querySelector("#sound"),
+        motionButton = document.querySelector("#motion");
+      function syncSettings() {
+        soundButton.textContent = soundOn ? "🔊 Sound" : "🔇 Muted";
+        soundButton.setAttribute("aria-pressed", String(soundOn));
+        motionButton.textContent = reducedMotion
+          ? "◻ Less Motion"
+          : "✨ Motion";
+        motionButton.setAttribute("aria-pressed", String(reducedMotion));
+      }
+      soundButton.onclick = () => {
+        soundOn = !soundOn;
+        save();
+        syncSettings();
+        if (soundOn) tone(523, 0.08);
+      };
+      motionButton.onclick = () => {
+        reducedMotion = !reducedMotion;
+        save();
+        syncSettings();
+      };
+      syncSettings();
+      update();
+      draw();
+    </script>
+  </body>
+</html>
