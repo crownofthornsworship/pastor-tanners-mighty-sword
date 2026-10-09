@@ -11,11 +11,22 @@
       * {
         box-sizing: border-box;
       }
+      html,
+      body,
+      button,
+      canvas,
+      .controls {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
       body {
         margin: 0;
         background: #090e1a;
         color: #f8f3e8;
         font-family: system-ui, Arial;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
       #titleScreen {
         position: fixed;
@@ -80,6 +91,7 @@
         position: relative;
         overflow: hidden;
         border-radius: 12px;
+        touch-action: none;
       }
       canvas {
         display: block;
@@ -317,6 +329,10 @@
           height: 46px;
           padding: 4px 8px;
         }
+        header h1 {
+          font-size: clamp(12px, 2.2vw, 18px);
+          white-space: nowrap;
+        }
         header small {
           display: none;
         }
@@ -536,7 +552,7 @@
       </div>
       <footer>
         Fictional residents and situations · Scripture references used for
-        learning · Mobile fullscreen update v0.4
+        learning · Close-camera mobile update v0.5
       </footer>
     </main>
     <script>
@@ -758,8 +774,41 @@
         ctx.textAlign = "center";
         ctx.fillText(s, x, y);
       }
+      function building(x, y, w, h, wall, roof = "#303f46") {
+        ctx.fillStyle = "rgba(4,10,18,.34)";
+        ctx.fillRect(x + 9, y + 11, w, h);
+        ctx.fillStyle = roof;
+        ctx.beginPath();
+        ctx.moveTo(x - 7, y + 14);
+        ctx.lineTo(x + w / 2, y - 10);
+        ctx.lineTo(x + w + 7, y + 14);
+        ctx.lineTo(x + w, y + 27);
+        ctx.lineTo(x, y + 27);
+        ctx.closePath();
+        ctx.fill();
+        box(x, y + 22, w, h - 22, wall);
+        box(x + w * 0.42, y + h - 38, w * 0.18, 38, "#c69b59");
+        const windowY = y + 38;
+        [0.14, 0.7].forEach((p) => {
+          box(x + w * p, windowY, w * 0.16, 22, "#9ed5e3");
+          box(x + w * p + 2, windowY + 2, w * 0.07, 18, "#d9f4f3");
+        });
+        box(x - 5, y + h, w + 10, 8, "#a5a6a0");
+      }
       function draw() {
         tick++;
+        const closeCamera = matchMedia(
+          "(max-width: 900px), (max-height: 600px)",
+        ).matches;
+        const zoom = closeCamera ? 1.58 : 1.22;
+        const halfW = 480 / zoom,
+          halfH = 288 / zoom;
+        const cameraX = clamp(hero.x, halfW, 960 - halfW);
+        const cameraY = clamp(hero.y, halfH, 576 - halfH);
+        ctx.save();
+        ctx.translate(480, 288);
+        ctx.scale(zoom, zoom);
+        ctx.translate(-cameraX, -cameraY);
         box(0, 0, 960, 576, "#244139");
         for (let x = 0; x < 960; x += 42)
           for (let y = 0; y < 576; y += 42) {
@@ -770,22 +819,25 @@
         box(325, 0, 100, 576, "#686e72");
         for (let x = 0; x < 960; x += 64) box(x, 287, 34, 4, "#d6bd78");
         for (let y = 0; y < 576; y += 70) box(372, y, 5, 35, "#d6bd78");
-        // Church, houses, park, river
-        box(22, 25, 260, 100, "#3e4e68");
-        box(34, 37, 236, 74, "#677c99");
-        box(124, 90, 55, 35, "#d9b35e");
-        label("VERBATIM CHURCH", 152, 67, "#fff3c4");
-        label("HEADQUARTERS", 152, 86, "#fff3c4", "12px system-ui");
+        // Church, houses, park, river. Layered facades add street-level depth.
+        building(22, 25, 260, 100, "#677c99", "#293746");
+        box(132, 7, 40, 36, "#334357");
+        ctx.fillStyle = "#e6c66f";
+        ctx.beginPath();
+        ctx.moveTo(152, -10);
+        ctx.lineTo(176, 10);
+        ctx.lineTo(128, 10);
+        ctx.closePath();
+        ctx.fill();
+        label("VERBATIM CHURCH", 152, 68, "#fff3c4");
+        label("ALBANY, OREGON", 152, 87, "#fff3c4", "11px system-ui");
         for (const [x, y, c] of [
           [508, 30, "#9b786b"],
           [785, 25, "#8b7e9c"],
           [36, 353, "#ad8a63"],
           [522, 375, "#758da1"],
         ]) {
-          box(x, y, 130, 88, "#303f46");
-          box(x + 9, y + 8, 112, 70, c);
-          box(x + 47, y + 49, 32, 29, "#ddca9c");
-          box(x + 18, y + 23, 24, 22, "#bde1ed");
+          building(x, y, 130, 88, c);
         }
         box(0, 515, 960, 61, "#266d8b");
         for (let i = 0; i < 13; i++)
@@ -898,7 +950,8 @@
           ctx.stroke();
         }
         if (heroSprite.complete && heroSprite.naturalWidth) {
-          const dirs = { down: 0, left: 1, right: 2, up: 3 };
+          // The art sheet's horizontal columns are ordered opposite the labels.
+          const dirs = { down: 0, left: 2, right: 1, up: 3 };
           const now = performance.now();
           const row =
             now < hero.swingUntil ? 2 : now < hero.movingUntil ? 1 : 0;
@@ -954,6 +1007,7 @@
           box(p.x, p.y, 5, 5, p.c);
           ctx.globalAlpha = 1;
         });
+        ctx.restore();
         if (flash > 0) {
           ctx.fillStyle = `rgba(255,232,143,${(flash / 30) * 0.4})`;
           ctx.fillRect(0, 0, 960, 576);
@@ -1243,6 +1297,13 @@
         for (let ev of ["pointerup", "pointercancel", "pointerleave"])
           b.addEventListener(ev, () => clearInterval(timer));
       });
+      // Android otherwise opens Copy / Select / Paste during sustained play.
+      for (const eventName of ["contextmenu", "selectstart", "dragstart"]) {
+        document.addEventListener(eventName, (event) => {
+          if (event.target.closest("button, canvas, .controls, .wrap"))
+            event.preventDefault();
+        });
+      }
       window.addEventListener("keydown", (e) => {
         if (
           ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(
