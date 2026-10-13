@@ -13,3 +13,7 @@ A family-friendly, Bible-based 2D action-adventure preview for Light & Life Game
 Public preview v0.2 includes five encounters, Scripture choices with retry feedback, animated shadows, an original Tanner character sheet with idle/walk/sword poses, a cinematic title screen, saved progress, reset, sound cues, touch controls, and responsive desktop/mobile presentation.
 
 All resident names and situations are fictional. Reference photographs are not included in this repository. Pastor Tanner approved public use of his name and recognizable cartoon likeness for this project.
+
+## Next updates
+
+See [GAME_ROADMAP.md](GAME_ROADMAP.md) for the ten-level campaign, synchronized combat animation, enemies, graphics, mobile controls, and release plan.
