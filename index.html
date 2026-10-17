@@ -9,7 +9,7 @@
     <title>Pastor Tanner's Mighty Sword</title>
     <meta
       name="description"
-      content="A Christian action-adventure through Albany, Oregon. Pastor Tanner wields the Word of God to defeat shadows and bring the light."
+      content="A ten-level Christian action-adventure through Albany, Oregon with Scripture encounters, rescues, varied shadows, mini-bosses and a powerful finale."
     />
     <meta name="theme-color" content="#151d30" />
     <link
@@ -21,7 +21,7 @@
     <meta property="og:title" content="Pastor Tanner's Mighty Sword" />
     <meta
       property="og:description"
-      content="The darkness has fallen over Albany. Wield the Word of God, defeat the shadows, and bring the light."
+      content="Ten levels of Scripture encounters, shadow battles, rescues, mini-bosses and a powerful finale in Albany."
     />
     <meta
       property="og:url"
@@ -47,6 +47,7 @@
       name="twitter:image"
       content="https://crownofthornsworship.github.io/pastor-tanners-mighty-sword/title-screen.png?v=1"
     />
+    <link rel="stylesheet" href="campaign.css?v=1" />
     <style>
       * {
         box-sizing: border-box;
@@ -596,7 +597,7 @@
     </style>
   </head>
   <body>
-<a href="https://crownofthornsworship.github.io/light-and-life-games/" aria-label="Back to Light & Life Games" style="position:fixed;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));z-index:99999;padding:10px 14px;border-radius:999px;background:#101820e6;color:#fff;text-decoration:none;font:800 14px/1.1 system-ui,-apple-system,sans-serif;box-shadow:0 4px 18px #0006;border:1px solid #ffffff40;backdrop-filter:blur(8px)">⌂ Light & Life Games</a>
+<a class="homeLink" href="https://crownofthornsworship.github.io/light-and-life-games/" aria-label="Back to Light & Life Games">⌂ <span>Light &amp; Life Games</span></a>
     <section id="titleScreen" aria-labelledby="gameTitle">
       <div class="title-card">
         <small>LIGHT &amp; LIFE GAMES PRESENTS</small>
@@ -612,7 +613,7 @@
     <header>
       <div>
         <h1>⚔️ PASTOR TANNER'S MIGHTY SWORD</h1>
-        <small>The Word Is Our Weapon · Downtown Albany Demo</small>
+        <small>The Word Is Our Weapon · Ten-Level Albany Campaign</small>
       </div>
       <div class="header-actions">
         <button id="fullscreen" aria-pressed="false">⛶ Full Screen</button>
@@ -623,9 +624,9 @@
     </header>
     <main>
       <div class="hud">
-        <span class="pill" id="progress">Shadows freed: 0 / 5</span
+        <span class="pill" id="progress">Level 1 / 10</span
         ><span class="pill" id="score">Light: 0</span
-        ><span class="pill" id="scrolls">Scrolls: 0 / 3</span
+        ><span class="pill" id="scrolls">Rescues: 0 / 10</span
         ><span class="pill" id="status">Mission: Find the shadows</span>
       </div>
       <div class="wrap">
@@ -640,16 +641,16 @@
         <section id="victory" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
           <div class="victory-card">
             <div class="victory-mark">🏆☀️</div>
-            <small>THE GREAT DARKNESS HAS BEEN DEFEATED</small>
-            <h2 id="victoryTitle">Level One Complete!</h2>
-            <p>Albany shines again. The residents are free, and Jesus receives the glory!</p>
+            <small id="victoryEyebrow">THE LIGHT ADVANCES</small>
+            <h2 id="victoryTitle">Level Complete!</h2>
+            <p id="victoryCopy">A resident is free and the darkness has been driven back.</p>
             <div class="victory-stats">
               <span class="pill" id="victoryScore"></span>
               <span class="pill" id="victoryScrolls"></span>
             </div>
             <div class="victory-actions">
-              <button id="keepExploring">Keep Exploring</button>
-              <button id="playAgain">Play Level Again</button>
+              <button id="keepExploring">Next Level</button>
+              <button id="playAgain">Replay Level</button>
             </div>
           </div>
         </section>
@@ -672,7 +673,8 @@
             <p class="help">
               Arrow keys / WASD or touch arrows. Walk near a resident and press
               Space / Enter or tap CONFRONT. Choose the Scripture, then swing
-              the charged sword through the shadow. No people are harmed.
+              the charged sword through each shadow. Damage lands only when
+              the visible blade connects. No people are harmed.
             </p>
             <p id="message" aria-live="polite">
               Welcome! The shadows have fallen over Albany. Bring the light.
@@ -694,10 +696,10 @@
       </div>
       <footer>
         Fictional residents and situations · Scripture references used for
-        learning · Scripture-charged combat update v0.6
+        learning · Ten-level Scripture campaign update v1.0
       </footer>
     </main>
-    <script>
+    <script type="text/plain" id="legacy-game-code">
       "use strict";
       const canvas = document.querySelector("#game"),
         ctx = canvas.getContext("2d"),
@@ -1658,5 +1660,6 @@
       update();
       draw();
     </script>
+    <script src="campaign.js?v=1"></script>
   </body>
 </html>

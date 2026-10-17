@@ -1,19 +1,17 @@
 # Pastor Tanner's Mighty Sword
 
-A family-friendly, Bible-based 2D action-adventure preview for Light & Life Games. Players listen to fictional residents, identify the spiritual struggle represented by a shadow, and choose a biblically appropriate passage. The sword defeats shadows only—never people.
+A family-friendly, Bible-based 2D action-adventure for Light & Life Games. Guide Pastor Tanner through a ten-level Albany campaign, listen to fictional residents, identify the spiritual struggle represented by each shadow, apply Scripture, and time visible sword strikes to rescue people. The sword defeats shadows only—never people.
 
 ## Controls
 
 - Move: Arrow keys, WASD, or touchscreen direction pad
-- Interact: Space, Enter, or **Confront Shadow**
+- Interact / attack: Space, Enter, **Confront Shadow**, or **Swing Truth**
 - Accessibility: sound toggle, reduced-motion toggle, keyboard controls, visible focus, live status messages
 
-## Current release
+## Campaign v1.0
 
-Public preview v0.2 includes five encounters, Scripture choices with retry feedback, animated shadows, an original Tanner character sheet with idle/walk/sword poses, a cinematic title screen, saved progress, reset, sound cues, touch controls, and responsive desktop/mobile presentation.
+The current release includes ten distinct chapters, ten rescues, Scripture encounters with retry feedback, five shadow behaviors, three mini-boss checkpoints, and a multi-stage final confrontation. Sword damage is synchronized to the visible blade arc, with directional range checks, hit/miss feedback, knockback, recovery timing, enemy projectiles, checkpoints, persistent progress, touch controls, landscape and portrait layouts, sound, and reduced-motion support.
 
 All resident names and situations are fictional. Reference photographs are not included in this repository. Pastor Tanner approved public use of his name and recognizable cartoon likeness for this project.
 
-## Next updates
-
-See [GAME_ROADMAP.md](GAME_ROADMAP.md) for the ten-level campaign, synchronized combat animation, enemies, graphics, mobile controls, and release plan.
+See [GAME_ROADMAP.md](GAME_ROADMAP.md) for completed milestones and future polish opportunities.

@@ -2,7 +2,11 @@
 
 ## Product goal
 
-Grow the five-encounter preview into a polished ten-level action-adventure where movement, sword combat against shadows, conversation, and Scripture choices all matter.
+Deliver a polished ten-level action-adventure where movement, sword combat against shadows, conversation, rescue, and Scripture choices all matter.
+
+## Campaign v1.0 status
+
+The ten-level structure, visible-blade hit timing, directional attacks, five shadow behaviors, ten Scripture rescues, mini-bosses at levels 3, 6, and 9, and a three-stage level 10 finale are now implemented. Progress migrates from the preview save and persists locally.
 
 ## Phase 1 — Combat and movement polish
 
